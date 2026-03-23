@@ -1,30 +1,38 @@
-# Use the official Node.js image
-ARG NODE_VERSION=20.18.0
-FROM node:${NODE_VERSION}-slim AS base
+# Stage 1: Build the Application
+# We use node:18 as the base for building and installing dependencies.
+FROM node:18 AS build
 
-LABEL fly_launch_runtime="Node.js"
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-# Set working directory
-WORKDIR /app
+# Copy package.json and package-lock.json first to leverage Docker caching.
+# If these files don't change, subsequent builds can skip 'npm install'.
+COPY package*.json ./
 
-# Install essential dependencies
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    build-essential \
-    python3 \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies
+RUN npm install
 
-# Copy package files
-COPY package.json package-lock.json ./
-
-# Install production dependencies
-RUN npm ci --only=production
-
-# Copy application code
+# Copy the rest of the application source code
 COPY . .
 
-# Expose the port Fly.io will use
-EXPOSE 8080
+# Stage 2: Create the Final Production Image
+# We use node:18 as the runtime image with all the necessary tools.
+FROM node:18
 
-# Start the server
-CMD ["node", "index.js"]
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy the node_modules and built application files from the 'build' stage
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/package*.json ./
+COPY --from=build /usr/src/app .
+
+# Expose the port your app runs on
+ENV PORT=8080
+EXPOSE $PORT
+
+# Run the application using the non-root user (recommended for security)
+USER node
+
+# Define the command to start your application
+CMD [ "node", "index.js" ]
