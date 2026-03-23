@@ -3,7 +3,7 @@ const path = require('path');
 const https = require('https');
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 const API_BASE = 'https://api.imdbapi.dev';
 const EMBED_BASE = 'https://vidsrc-embed.ru';
 
