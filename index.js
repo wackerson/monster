@@ -23,6 +23,12 @@ function httpsGet(url) {
 const HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
+  <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+  <script type="text/javascript">
+    aclib.runPop({
+      zoneId: '10824650',
+    });
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monsterflix - Search Movies & TV Shows</title>
@@ -364,6 +370,12 @@ app.get('/', (req, res) => {
 const DETAIL_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
+  <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+  <script type="text/javascript">
+    aclib.runPop({
+      zoneId: '10824650',
+    });
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monsterflix - Loading...</title>
